@@ -213,28 +213,28 @@ The \textit{periodogram} is the collection of values $|J(f_0)|^2$, $|J(f_1)|^2$,
 \begin{figure}
     \centering
     \begin{minipage}[t]{0.3\textwidth}
-    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
+    \centerline{\includegraphics[width=\textwidth]{img/autocorrelation_200.png}}
     \centerline{Autocovariance ($N=200$)}
     \end{minipage}
     \begin{minipage}[t]{0.3\textwidth}
-    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
+    \centerline{\includegraphics[width=\textwidth]{img/autocorrelation_500.png}}
     \centerline{Autocovariance ($N=500$)}
     \end{minipage}
     \begin{minipage}[t]{0.3\textwidth}
-    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
+    \centerline{\includegraphics[width=\textwidth]{img/autocorrelation_1000.png}}
     \centerline{Autocovariance ($N=1000$)}
     \end{minipage}
     \vskip1em
     \begin{minipage}[t]{0.3\textwidth}
-    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
+    \centerline{\includegraphics[width=\textwidth]{img/periodogramm_200.png}}
     \centerline{Periodogram ($N=200$)}
     \end{minipage}
     \begin{minipage}[t]{0.3\textwidth}
-    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
+    \centerline{\includegraphics[width=\textwidth]{img/periodogramm_500.png}}
     \centerline{Periodogram ($N=500$)}
     \end{minipage}
     \begin{minipage}[t]{0.3\textwidth}
-    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
+    \centerline{\includegraphics[width=\textwidth]{img/periodogramm_1000.png}}
     \centerline{Periodogram ($N=1000$)}
     \end{minipage}
     \vskip1em
@@ -245,7 +245,10 @@ The \textit{periodogram} is the collection of values $|J(f_0)|^2$, $|J(f_1)|^2$,
 \end{exercise}
 
 \begin{solution}
-    
+    \begin{itemize}
+        \item When plotting the sample autocovariance, we observe that, on average, most of the signal is uncorrelated, as the autocovariance is close to 0 for most lags $\tau$, except for $\tau=0$, which is 1 because it represents the variance of the signal, $\sigma^2=1$ in our case. Moreover, the standard deviation is really close to 0, around 0.05, which shows that our estimator is really good as long as we take a number of simulation high enough.
+        \item interpretation to make 
+    \end{itemize}
 \end{solution}
 
 \begin{exercise}
@@ -262,7 +265,17 @@ The \textit{periodogram} is the collection of values $|J(f_0)|^2$, $|J(f_1)|^2$,
 \end{exercise}
 
 \begin{solution}
-    
+    \begin{itemize}
+        \item Let $\tau>0$. Let us use the definition of the variance of $\hat{\gamma}(\tau)$ : $\text{var}(\hat{\gamma}(\tau))=\mathbb{E}(\hat{\gamma}(\tau)^2)-[\mathbb{E}(\hat{\gamma}(\tau))]^2$ :
+        \begin{equation}
+            \text{var}(\hat{\gamma}(\tau))=\frac{1}{N^2}\bigg(\sum_{n=0}^{N-\tau-1}\sum_{m=0}^{N-\tau-1}\mathbb{E}(X_nX_{n+\tau}X_mX_{m+\tau})-\bigg[\sum_{n=0}^{N-\tau-1}\mathbb{E}(X_nX_{n+\tau})\bigg]^2\bigg)
+        \end{equation}
+        Using that $\mathbb{E}(X_nX_{n+\tau})=\gamma(\tau)$, $\mathbb{E}(X_nX_m)=\gamma(n-m)$ and thanks to the hint, the first term of the hint and the last term of variance are equal which simplifies the expression as :
+        \begin{equation}
+            \text{var}(\hat{\gamma}(\tau))=\frac{1}{N^2}\bigg(\sum_{n=0}^{N-\tau-1}\sum_{m=0}^{N-\tau-1}[\gamma(n-m)^2+\gamma(n-m-\tau)\gamma(n-m+\tau)]\bigg)
+        \end{equation}
+        \item We need to show that $\text{var}(\hat{\gamma}(\tau))$ go to 0 as $N\to\infty$. When $N\to\infty$, we know that  $\sum|\gamma(\tau)|<\infty$. Thus, we do have $\text{var}(\hat{\gamma}(\tau))$ that goes to 0 as $N\to\infty$ thanks to the $1/N$ in front of the sum.
+    \end{itemize}
 \end{solution}
 
 Contrary to the correlogram, the periodogram is not consistent.
@@ -281,7 +294,32 @@ In the following question, this is proven for Gaussian white noise, but this hol
 \end{exercise}
 
 \begin{solution}
-    
+    \begin{itemize}
+        \item For all $n\in{1,\dots,N}$, we have $\mathbb{E}(X_n)=0$. So by linearity of the expectation, we have :
+        \begin{equation}
+            \mathbb{E}(A(f_k))=\mathbb{E}(B(f_k))=0
+        \end{equation}
+
+        For the variance, we have : $\text{var}(A(f_k))=\sigma^2\sum_{n=0}^{N-1}cos^2(-2\pi kn/N)$. But $cos^2(-2\pi kn/N)=\frac{1+cos(4\pi kn/N)}{2}$, which simplifies the variance as : $\text{var}(A(f_k))=\frac{\sigma^2}{2}(N+\sum_{n=0}^{N-1}cos(4\pi kn/N))$. 
+
+        However, summing a cosine function over its full period will be zero which finally give (exactly the same reasoning for $B(f_k)$): 
+        \begin{equation}
+            \text{var}(A(f_k))=\text{var}(B(f_k))=\sigma^2\frac{N}{2}
+        \end{equation}
+        \item We have $|J(f_k)|^2 = (1/N^2) (A(f_k)^2 + B(f_k)^2)$.
+        As a sum of independent Gaussian white noise, $A(f_k)\sim\mathcal{N}(0, \frac{\sigma^2N}{2})$ and $B(f_k)\sim\mathcal{N}(0, \frac{\sigma^2N}{2})$. Moreover, we have, by developing the formula, removing terms that are equal to 0 and using a trigonometric identity : 
+        \begin{equation}
+            \text{Cov}(A(f_k),B(f_k))=\frac{\sigma^2}{2}\sum_{n=0}^{N-1}sin(2 \pi f_k n/f_s) = 0
+        \end{equation}
+        because, as in the previous point, summing a cosine function over its full period will be zero. That means that $A(f_k)$ and $B(f_k)$ are independent.
+        
+        Thus, it comes that $|J(f_k)|^2$ is a sum of squared independent standard normal, which induces : 
+        \begin{equation}
+            |J(f_k)|^2\sim\frac{\sigma^2}{2}\chi_2^2
+        \end{equation}
+        \item From the previous point, we have : $\text{var}(|J(f_k)|^2)=\sigma^4$
+        \item As the variance is not impacted by N, that explains why in the periodogram of the Figure \ref{fig:wn-exp}, the order of magnitude of the standard deviation is always the same for all values of N. 
+    \end{itemize}
 \end{solution}
 
 \begin{exercise}\label{q:barlett}
@@ -296,19 +334,19 @@ In the following question, this is proven for Gaussian white noise, but this hol
 \end{exercise}
 
 \begin{solution}
-    
+   By implementing this procedure, the standard deviation of the periodogram becomes more closely aligned with the mean, which is precisely our objective. However, we notice that the mean value, expected to be 1, is instead 0.20. This discrepancy arises from dividing the signal into five segments, which reduces the variance but also affects the mean value.
 \begin{figure}
     \centering
     \begin{minipage}[t]{0.3\textwidth}
-    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
+    \centerline{\includegraphics[width=\textwidth]{img/Bartlett_periodogramm_200.png}}
     \centerline{Periodogram ($N=200$)}
     \end{minipage}
     \begin{minipage}[t]{0.3\textwidth}
-    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
+    \centerline{\includegraphics[width=\textwidth]{img/Bartlett_periodogramm_500.png}}
     \centerline{Periodogram ($N=500$)}
     \end{minipage}
     \begin{minipage}[t]{0.3\textwidth}
-    \centerline{\includegraphics[width=\textwidth]{example-image-golden}}
+    \centerline{\includegraphics[width=\textwidth]{img/Bartlett_periodogramm_1000.png}}
     \centerline{Periodogram ($N=1000$)}
     \end{minipage}
     \vskip1em
